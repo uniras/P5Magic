@@ -93,7 +93,7 @@ js.p5start(sketch)
 セル内のp5play.jsライブラリを使ったPythonコードをPyScriptを用いてiframe内で実行するマジックコマンド
 
 ```juypyter
-%%runp5 [width] [height] [background] [p5_global] [p5_type] [p5_conf] [py_type] [py_conf] [js_src] [version]
+%%runp5 [width] [height] [background] [p5_global] [p5_type] [py_type] [py_conf] [js_src] [version]
 ```
 
 - width: iframeの幅を指定します。デフォルトは500です。
@@ -111,5 +111,5 @@ js.p5start(sketch)
 セル内のp5play.jsライブラリを使ったPythonコードからブラウザで実行可能な単一HTMLを生成するマジックコマンド。オプションはrunp5と同じです。
 
 ```juypyter
-%%genp5 [width] [height] [background] [p5_global] [p5_type] [p5_conf] [py_type] [py_conf] [js_src] [version]
+%%genp5 [width] [height] [background] [p5_global] [p5_type] [py_type] [py_conf] [js_src] [version]
 ```
