@@ -5,7 +5,6 @@ import socket
 import threading
 import time
 import json
-import http.server as http_server
 import IPython.core.magic as magic  # type: ignore  # noqa: F401
 import IPython.display as display  # type: ignore  # noqa: F401
 
@@ -239,7 +238,7 @@ js.window.p5start(_p5_global)
             f.write(base_html)
             temp_html_path = f.name
 
-        # サーバーを起動
+        # 空いているポート番号を取得
         port = find_free_port()
 
         # サーバーURLを取得
@@ -255,6 +254,17 @@ js.window.p5start(_p5_global)
         display.display(display.IFrame(src=htmlurl, width=width, height=height))
 
 
+# JavaScriptを実行してプロキシURLを取得
+def get_server_url(port):
+    if is_google_colab():
+        from google.colab.output import eval_js  # type: ignore
+        url = eval_js(f"google.colab.kernel.proxyPort({port}, {{'cache': true}})").strip("/")
+    else:
+        url = f"http://localhost:{port}"
+
+    return url
+
+
 # 18000番台で空いているポート番号を取得
 def find_free_port(start=18000, end=18099):
     for port in range(start, end):
@@ -264,72 +274,16 @@ def find_free_port(start=18000, end=18099):
     raise RuntimeError("No free ports available")
 
 
-# JavaScriptを実行してプロキシURLを取得
-def get_server_url(port):
-    if is_google_colab():
-        from google.colab.output import eval_js  # type: ignore
-        url = eval_js(f"google.colab.kernel.proxyPort({port})").strip("/")
-    else:
-        url = f"http://localhost:{port}"
-
-    return url
-
-
-# パスを指定してハンドラを生成するファクトリ関数
-def handler_factory(file_name):
-    return lambda *args, **kwargs: CustomHandler(file_name, *args, **kwargs)
-
-
-# 指定したファイルを返して削除して終了するハンドラ
-class CustomHandler(http_server.SimpleHTTPRequestHandler):
-    def __init__(self, file_path, *args, **kwargs):
-        self.file_path = file_path
-        super().__init__(*args, **kwargs)
-
-    def do_GET(self):
-        if self.path == '/' + os.path.basename(self.file_path) and os.path.exists(self.file_path):
-            # コンストラクタで指定したテンポラリファイルがリクエストされた
-            self.send_response(200)
-            self.send_header('Content-type', 'text/html')
-            self.end_headers()
-
-            with open(self.file_path, 'rb') as file:
-                self.wfile.write(file.read())
-
-            # テンポラリファイルを削除
-            os.remove(self.file_path)
-        else:
-            # 通常のファイルをリクエスト
-            getpath = os.path.join(get_basedir(), self.path.lstrip('/'))
-            if os.path.exists(getpath):
-                self.path = self.path.lstrip('/')
-                with open(getpath, 'rb') as file:
-                    self.send_response(200)
-                    self.send_header('Content-type', self.guess_type(self.path))
-                    self.end_headers()
-                    self.wfile.write(file.read())
-            else:
-                self.send_response(404)
-                self.end_headers()
-                self.wfile.write(b'404 Not Found')
-
-    def log_message(self, format, *args):
-        # 標準出力へのログ出力を抑制
-        return
-
-
-# サーバを起動する関数
+# サーバーの実行
 def start_server_func(file_path, port):
-    server_address = ('', port)
-    httpd = http_server.HTTPServer(server_address, handler_factory(file_path))
+    import subprocess
+    import time
 
-    def stop_server():
-        time.sleep(60)  # 60秒後にサーバーを終了
-        httpd.shutdown()
-
-    threading.Thread(target=stop_server).start()
-
-    httpd.serve_forever()
+    TIMEOUT = 30  # サーバーのタイムアウト（秒）
+    server_process = subprocess.Popen(["python", "-m", "http.server", f"{port}"])
+    time.sleep(TIMEOUT)
+    server_process.terminate()  # プロセスの終了
+    os.remove(file_path)
 
 
 # サーバを別スレッドで起動
