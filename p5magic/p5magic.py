@@ -4,6 +4,7 @@ import os
 import socket
 import threading
 import time
+import subprocess
 import json
 import IPython.core.magic as magic  # type: ignore  # noqa: F401
 import IPython.display as display  # type: ignore  # noqa: F401
@@ -276,9 +277,6 @@ def find_free_port(start=18000, end=18099):
 
 # サーバーの実行
 def start_server_func(file_path, port):
-    import subprocess
-    import time
-
     TIMEOUT = 30  # サーバーのタイムアウト（秒）
     server_process = subprocess.Popen(["python", "-m", "http.server", f"{port}"])
     time.sleep(TIMEOUT)
