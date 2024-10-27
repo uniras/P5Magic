@@ -11,7 +11,7 @@ Jypyter(notebook/lab)・VSCodeまたはGoogle Colabでp5play.jsを使ったコ�
 コードセルに以下のコードを貼り付けて実行しマジックコマンドを登録してください。カーネルやランタイムを再起動する度に再実行する必要があります。
 
 ```python
-%pip install p5magic
+%pip install -q p5magic
 from p5magic import register_p5magic
 
 register_p5magic()

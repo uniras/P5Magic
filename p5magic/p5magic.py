@@ -134,7 +134,7 @@ def _p5_global(p5instance):
 
     for name in dir(p5):
         attr = getattr(p5, name)
-        if name.startswith("__"):
+        if not name.startswith("__"):
             globals()[name] = attr
 
     p5.setup = setup if 'setup' in globals() else js.undefined
