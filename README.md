@@ -114,3 +114,7 @@ js.p5start(sketch)
 ```juypyter
 %%genp5 [width] [height] [background] [p5_global] [p5_type] [p5play_use] [py_type] [py_conf] [js_src] [version]
 ```
+
+### ライセンス
+
+p5play.jsはAGPL-v3ライセンス・商用ライセンスのデュアルライセンスとなっていますので使用の際は確認してください。

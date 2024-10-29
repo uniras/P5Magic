@@ -84,8 +84,8 @@ def p5_execute(line, cell, viewmode):
     p5_type = args[4] if len(args) > 4 else "q5"
     p5play_use = args[5] if len(args) > 5 else "False"
     py_type = args[6] if len(args) > 6 else "mpy"
-    py_conf = args[7] if len(args) > 7 and args[4] != "{}" else None
-    js_src = args[8] if len(args) > 8 and args[5] != "[]" else None
+    py_conf = args[7] if len(args) > 7 and args[7] != "{}" else None
+    js_src = args[8] if len(args) > 8 and args[8] != "[]" else None
     version = args[9] if len(args) > 9 else PYS_DEFAULT_VERSION
 
     if py_type != "py" and py_type != "mpy":
