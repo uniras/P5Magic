@@ -46,17 +46,18 @@ def register_p5magic():
 @magic.register_cell_magic
 def runp5(line, cell):
     """
-    セル内のp5play.jsライブラリを使ったPythonコードをPyScriptを用いてiframe内で実行するマジックコマンド
+    セル内のp5.js/q5.js/p5play.jsライブラリを使ったPythonコードをPyScriptを用いてiframe内で実行するマジックコマンド
 
     Usage:
-        %%runp5 [width] [height] [background] [p5_global] [p5_type] [p5_conf] [py_type] [py_conf] [js_src] [version]
+        %%runp5 [width] [height] [background] [p5_global] [p5_type] [p5_conf] [p5play_use] [py_type] [py_conf] [js_src] [version]
 
     Args:
         width: iframeの幅を指定します。デフォルトは500です。
         height: iframeの高さを指定します。デフォルトは500です。
         background: iframeの背景色を指定します。デフォルトはwhiteです。
-        p5_global: p5playをグローバルモードと同様のコーディングができるようにするかどうかを指定します。デフォルトはTrueです。
+        p5_global: p5をグローバルモードと同様のコーディングができるようにするかどうかを指定します。デフォルトはTrueです。
         p5_type: 実行するp5.jsの種類。q5またはp5を指定します。q5は軽量p5互換ライブラリのq5.js、p5はp5.jsを使います。デフォルトはq5です。
+        p5play_use: p5play.jsを使用するかどうかを指定します。デフォルトはFalseです。
         py_type: 実行するPythonの種類。pyまたはmpyを指定します。mpyはMicroPyton、pyはCPython互換のPyodideで実行します。デフォルトはmpyです。グローバルモードのときはmpy固定です。
         py_conf: PyScriptの設定を''で囲んだJSON形式で指定します。デフォルトは{}です。
         js_src: 外部JavaScriptのURLを''で囲んだ文字列のJSON配列形式で指定します。デフォルトは[]です。
@@ -68,7 +69,7 @@ def runp5(line, cell):
 @magic.register_cell_magic
 def genp5(line, cell):
     """
-    セル内のp5play.jsライブラリを使ったPythonコードをPyScriptを用いてiframe内で実行するために生成したHTMLを表示するマジックコマンド
+    セル内のp5.js/q5.js/p5play.jsライブラリを使ったPythonコードをPyScriptを用いてiframe内で実行するために生成したHTMLを表示するマジックコマンド
     """
     p5_execute(line, cell, True)
 
@@ -81,10 +82,11 @@ def p5_execute(line, cell, viewmode):
     background = args[2] if len(args) > 2 else "white"
     p5_global = args[3] if len(args) > 3 else "True"
     p5_type = args[4] if len(args) > 4 else "q5"
-    py_type = args[5] if len(args) > 5 else "mpy"
-    py_conf = args[6] if len(args) > 6 and args[4] != "{}" else None
-    js_src = args[7] if len(args) > 7 and args[5] != "[]" else None
-    version = args[8] if len(args) > 8 else PYS_DEFAULT_VERSION
+    p5play_use = args[5] if len(args) > 5 else "False"
+    py_type = args[6] if len(args) > 6 else "mpy"
+    py_conf = args[7] if len(args) > 7 and args[4] != "{}" else None
+    js_src = args[8] if len(args) > 8 and args[5] != "[]" else None
+    version = args[9] if len(args) > 9 else PYS_DEFAULT_VERSION
 
     if py_type != "py" and py_type != "mpy":
         raise ValueError("Invalid type. Use py or mpy")
@@ -92,35 +94,23 @@ def p5_execute(line, cell, viewmode):
     if p5_type != "p5" and p5_type != "q5":
         raise ValueError("Invalid p5_type. Use p5 or q5")
 
-    # 外部JavaSript要素を生成
-    if js_src is not None:
-        try:
-            srcs = json.loads(js_src)
-            if not isinstance(srcs, list):
-                raise ValueError("Invalid JSON List format for js_src")
-            js_srctag = "\n".join([f'    <script src="{src}"></script>' for src in srcs])
-            js_srctag = js_srctag.rstrip("\n")
-            js_srctag = f"\n{js_srctag}"
-        except json.JSONDecodeError:
-            raise ValueError("Invalid JSON List format for js_src")
-    else:
-        js_srctag = ""
-
-    # py-config要素を生成
-    if py_conf is not None:
-        try:
-            json.loads(py_conf)
-        except json.JSONDecodeError:
-            raise ValueError("Invalid JSON format for py_conf")
-        py_config = f"\n    <{py_type}-config>{py_conf}</{py_type}-config>"
-    else:
-        py_config = ""
-
+    # p5.jsのライブラリを選択
     if p5_type == "p5":
-        p5lib = "https://cdn.jsdelivr.net/npm/p5@1/lib/p5.min.js"
+        p5lib = ["https://cdn.jsdelivr.net/npm/p5@1/lib/p5.min.js"]
     else:
-        p5lib = "https://cdn.jsdelivr.net/npm/q5@2/q5.min.js"
+        p5lib = ["https://cdn.jsdelivr.net/npm/q5@2/q5.min.js"]
 
+    # p5play.jsを使う場合はライブラリを追加
+    if p5play_use == "True" or p5play_use == "true":
+        p5lib.append("https://cdn.jsdelivr.net/npm/p5play@3/planck.min.js")
+        p5lib.append("https://cdn.jsdelivr.net/npm/p5play@3/p5play.js")
+
+    # p5.jsのライブラリ要素を生成
+    p5libtag = "\n".join([f"""    <script src="{lib}"></script>""" for lib in p5lib])
+    p5libtag = p5libtag.rstrip("\n")
+    p5libtag = f"\n{p5libtag}"
+
+    # グローバルモードのコードを生成
     if p5_global == "True" or p5_global == "true":
         py_type = "mpy"
         p5globalCode = """
@@ -166,6 +156,30 @@ js.window.p5start(_p5_global)
     else:
         p5globalCode = ""
 
+    # 外部JavaSript要素を生成
+    if js_src is not None:
+        try:
+            srcs = json.loads(js_src)
+            if not isinstance(srcs, list):
+                raise ValueError("Invalid JSON List format for js_src")
+            js_srctag = "\n".join([f"""    <script src="{src}"></script>""" for src in srcs])
+            js_srctag = js_srctag.rstrip("\n")
+            js_srctag = f"\n{js_srctag}"
+        except json.JSONDecodeError:
+            raise ValueError("Invalid JSON List format for js_src")
+    else:
+        js_srctag = ""
+
+    # py-config要素を生成
+    if py_conf is not None:
+        try:
+            json.loads(py_conf)
+        except json.JSONDecodeError:
+            raise ValueError("Invalid JSON format for py_conf")
+        py_config = f"\n    <{py_type}-config>{py_conf}</{py_type}-config>"
+    else:
+        py_config = ""
+
     # コードのHTMLテンプレート生成
     base_html = f"""
 <!DOCTYPE html>
@@ -173,10 +187,7 @@ js.window.p5start(_p5_global)
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="{p5lib}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/p5play@3/planck.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/p5play@3/p5play.js"></script>
-    <script type="module" src="https://pyscript.net/releases/{version}/core.js"></script>{js_srctag}{py_config}
+    <script type="module" src="https://pyscript.net/releases/{version}/core.js"></script>{p5libtag}{js_srctag}{py_config}
     <script type="module">
         const loading = document.getElementById('loading');
         addEventListener('{py_type}:ready', () => loading.close());

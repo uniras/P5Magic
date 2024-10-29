@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "p5magic"
-version = "1.1.1"
+version = "1.2.0"
 description = "This Python package is a magic command that executes Python code in code cells on Jupyter and Google Colab using PyScript within an iframe."
 readme = "README.md"
 authors = [
@@ -12,7 +12,7 @@ authors = [
   {email = "tkappeng@gmail.com"}
 ]
 license = {text = "MIT License"}
-keywords = ["PyScript", "jupyter", "magic", "colab", "iframe", "p5.js", "q5.js", "processing", "creative coding", "p5play"]
+keywords = ["PyScript", "jupyter", "magic", "colab", "iframe", "p5.js", "q5.js", "processing", "creative coding", "p5play.js"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
