@@ -45,7 +45,7 @@ def genp5(line, cell):
     セル内のp5.js/q5.js/p5play.jsライブラリを使ったPythonコードをPyScriptを用いてiframe内で実行するために生成したHTMLを表示するマジックコマンド
     """
     args = parse_p5_args(line, cell)
-    args["htmlmode"] = False
+    args["htmlmode"] = True
 
     pysmagic.run_pyscript(args)
 
@@ -117,7 +117,7 @@ def parse_p5_args(line, cell):
 """
 
     # グローバルモードのコードを生成
-    if p5_global.lower == "true":
+    if p5_global.lower() == "true":
         args["py_type"] = "mpy"
         p5globalCode = """
 
