@@ -57,10 +57,10 @@ def parse_p5_args(line, cell):
     args["width"] = int(line_args[0]) if len(line_args) > 0 else 500
     args["height"] = int(line_args[1]) if len(line_args) > 1 else 500
     args["background"] = line_args[2] if len(line_args) > 2 else "white"
-    p5_global = args[3]if len(args) > 3 else "True"
-    p5_type = args[4] if len(args) > 4 else "q5"
-    p5play_use = args[5] if len(args) > 5 else "False"
-    args["py_type"] = line_args[6] if len(line_args) > 6 else "mpy"
+    p5_global = line_args[3].lower() if len(line_args) > 3 else "true"
+    p5_type = line_args[4].lower() if len(line_args) > 4 else "q5"
+    p5play_use = line_args[5].lower() if len(line_args) > 5 else "false"
+    args["py_type"] = line_args[6].lower() if len(line_args) > 6 else "mpy"
     args["py_conf"] = line_args[7] if len(line_args) > 7 and line_args[7] != "{}" else None
     args["js_src"] = line_args[8] if len(line_args) > 8 and line_args[8] != "[]" else None
     args["py_ver"] = line_args[9] if len(line_args) > 9 and line_args[9].lower() != "none" else None
@@ -75,7 +75,7 @@ def parse_p5_args(line, cell):
         p5lib = ["https://cdn.jsdelivr.net/npm/q5@2/q5.min.js"]
 
     # p5play.jsを使う場合はライブラリを追加
-    if p5play_use == "True" or p5play_use == "true":
+    if p5play_use == "true":
         p5lib.append("https://cdn.jsdelivr.net/npm/p5play@3/planck.min.js")
         p5lib.append("https://cdn.jsdelivr.net/npm/p5play@3/p5play.js")
 
@@ -117,7 +117,7 @@ def parse_p5_args(line, cell):
 """
 
     # グローバルモードのコードを生成
-    if p5_global.lower() == "true":
+    if p5_global == "true":
         args["py_type"] = "mpy"
         p5globalCode = """
 
