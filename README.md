@@ -11,7 +11,7 @@ Jypyter(notebook/lab)・VSCodeまたはGoogle Colabでp5.js/q5.js/p5play.jsを�
 コードセルに以下のコードを貼り付けて実行しマジックコマンドを登録してください。カーネルやランタイムを再起動する度に再実行する必要があります。
 
 ```python
-%pip install -q -U p5magic
+%pip install -q -U pysmagic p5magic
 from p5magic import register_p5magic
 
 register_p5magic()
@@ -93,7 +93,7 @@ js.p5start(sketch)
 セル内のp5play.jsライブラリを使ったPythonコードをPyScriptを用いてiframe内で実行するマジックコマンド
 
 ```juypyter
-%%runp5 [width] [height] [background] [p5_global] [p5_type] [p5play_use] [py_type] [py_conf] [js_src] [version]
+%%runp5 [width] [height] [background] [p5_global] [p5_type] [p5play_use] [py_type] [py_conf] [js_src] [py_ver]
 ```
 
 - width: iframeの幅を指定します。デフォルトは500です。
@@ -105,7 +105,7 @@ js.p5start(sketch)
 - py_type: 実行するPythonの種類。pyまたはmpyを指定します。mpyはMicroPyton、pyはCPython互換のPyodideで実行します。デフォルトはmpyです。グローバルモードのときはmpy固定です。
 - py_conf: PyScriptの設定を''で囲んだJSON形式で指定します。デフォルトは{}です。
 - js_src: 外部JavaScriptのURLを''で囲んだ文字列のJSON配列形式で指定します。デフォルトは[]です。
-- version: PyScriptのバージョンを指定します.
+- py_ver: PyScriptのバージョンを指定します。
 
 #### %%genp5
 
