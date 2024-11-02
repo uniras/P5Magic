@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "p5magic"
-version = "2.0.2"
+version = "2.1.0"
 description = "This Python package is a magic command that executes Python code in code cells on Jupyter and Google Colab using PyScript within an iframe."
 readme = "README.md"
 authors = [

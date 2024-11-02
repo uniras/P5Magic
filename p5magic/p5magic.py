@@ -54,8 +54,8 @@ def parse_p5_args(line, cell):
     # 引数のパース
     line_args = shlex.split(line)
     args = {}
-    args["width"] = int(line_args[0]) if len(line_args) > 0 else 500
-    args["height"] = int(line_args[1]) if len(line_args) > 1 else 500
+    args["width"] = line_args[0] if len(line_args) > 0 else "500"
+    args["height"] = line_args[1] if len(line_args) > 1 else "500"
     args["background"] = line_args[2] if len(line_args) > 2 else "white"
     p5_global = line_args[3].lower() if len(line_args) > 3 else "true"
     p5_type = line_args[4].lower() if len(line_args) > 4 else "q5"
