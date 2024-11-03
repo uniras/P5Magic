@@ -34,8 +34,8 @@ def runp5(line, cell):
         py_ver: PyScriptのバージョンを指定します.
     """
     args = parse_p5_args(line, cell)
+    args = set_p5_args(args)
     args["htmlmode"] = False
-
     pysmagic.run_pyscript(args)
 
 
@@ -45,8 +45,13 @@ def genp5(line, cell):
     セル内のp5.js/q5.js/p5play.jsライブラリを使ったPythonコードをPyScriptを用いてiframe内で実行するために生成したHTMLを表示するマジックコマンド
     """
     args = parse_p5_args(line, cell)
+    args = set_p5_args(args)
     args["htmlmode"] = True
+    pysmagic.run_pyscript(args)
 
+
+def run_p5script(args):
+    args = set_p5_args(args)
     pysmagic.run_pyscript(args)
 
 
@@ -57,14 +62,25 @@ def parse_p5_args(line, cell):
     args["width"] = line_args[0] if len(line_args) > 0 else "500"
     args["height"] = line_args[1] if len(line_args) > 1 else "500"
     args["background"] = line_args[2] if len(line_args) > 2 else "white"
-    p5_global = line_args[3].lower() if len(line_args) > 3 else "true"
-    p5_type = line_args[4].lower() if len(line_args) > 4 else "q5"
-    p5play_use = line_args[5].lower() if len(line_args) > 5 else "false"
+    args["p5_global"] = line_args[3] if len(line_args) > 3 else "true"
+    args["p5_type"] = line_args[4] if len(line_args) > 4 else "q5"
+    args["p5play_use"] = line_args[5] if len(line_args) > 5 else "false"
     args["py_type"] = line_args[6].lower() if len(line_args) > 6 else "mpy"
     args["py_conf"] = line_args[7] if len(line_args) > 7 and line_args[7] != "{}" else None
     args["js_src"] = line_args[8] if len(line_args) > 8 and line_args[8] != "[]" else None
     args["py_ver"] = line_args[9] if len(line_args) > 9 and line_args[9].lower() != "none" else None
+    args["py_script"] = cell
+    return args
 
+
+def set_p5_args(args):
+    # 設定の取得
+    p5_global = args.get("p5_global", "true").lower()
+    p5_type = args.get("p5_type", "q5").lower()
+    p5play_use = args.get("p5play_use", "false").lower()
+    pyscript = args.get("py_script", "")
+
+    # p5_typeのチェック
     if p5_type != "p5" and p5_type != "q5":
         raise ValueError("Invalid p5_type. Use p5 or q5")
 
@@ -162,6 +178,6 @@ js.p5start(_p5_global)
     else:
         p5globalCode = ""
 
-    args["py_script"] = cell + p5globalCode
+    args["py_script"] = pyscript + p5globalCode
 
     return args
