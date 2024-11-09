@@ -68,7 +68,7 @@ def parse_p5_args(line, cell):
     args["py_type"] = line_args[6].lower() if len(line_args) > 6 else "mpy"
     args["py_conf"] = line_args[7] if len(line_args) > 7 and line_args[7] != "{}" else None
     args["js_src"] = line_args[8] if len(line_args) > 8 and line_args[8] != "[]" else None
-    args["py_ver"] = line_args[9] if len(line_args) > 9 and line_args[9].lower() != "none" else None
+    args["py_ver"] = line_args[9] if len(line_args) > 9 else "none"
     args["py_script"] = cell
     return args
 
