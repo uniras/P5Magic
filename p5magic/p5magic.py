@@ -19,18 +19,19 @@ def runp5(line, cell):
     セル内のp5.js/q5.js/p5play.jsライブラリを使ったPythonコードをPyScriptを用いてiframe内で実行するマジックコマンド
 
     Usage:
-        %%runp5 [width] [height] [background] [p5_global] [p5_type] [p5play_use] [py_type] [py_conf] [js_src] [py_ver]
+        %%runp5 [width] [height] [background] [py_val] [p5_global] [p5_type] [p5play_use] [py_type] [py_conf] [js_src] [py_ver]
 
     Args:
         width: iframeの幅を指定します。デフォルトは500です。
         height: iframeの高さを指定します。デフォルトは500です。
         background: iframeの背景色を指定します。デフォルトはwhiteです。
+        py_val: PyScriptの変数を''で囲んだJSON形式で指定します。デフォルトは'{}'です。
         p5_global: p5をグローバルモードと同様のコーディングができるようにするかどうかを指定します。デフォルトはTrueです。
         p5_type: 実行するp5.jsの種類。q5またはp5を指定します。q5は軽量p5互換ライブラリのq5.js、p5はp5.jsを使います。デフォルトはq5です。
         p5play_use: p5play.jsを使用するかどうかを指定します。デフォルトはFalseです。
         py_type: 実行するPythonの種類。pyまたはmpyを指定します。mpyはMicroPyton、pyはCPython互換のPyodideで実行します。デフォルトはmpyです。グローバルモードのときはmpy固定です。
-        py_conf: PyScriptの設定を''で囲んだJSON形式で指定します。デフォルトは{}です。
-        js_src: 外部JavaScriptのURLを''で囲んだ文字列のJSON配列形式で指定します。デフォルトは[]です。
+        py_conf: PyScriptの設定を''で囲んだJSON形式で指定します。デフォルトは'{}'です。
+        js_src: 外部JavaScriptのURLを''で囲んだ文字列のJSON配列形式で指定します。デフォルトは'[]'です。
         py_ver: PyScriptのバージョンを指定します.
     """
     args = parse_p5_args(line, cell)
@@ -62,13 +63,14 @@ def parse_p5_args(line, cell):
     args["width"] = line_args[0] if len(line_args) > 0 else "500"
     args["height"] = line_args[1] if len(line_args) > 1 else "500"
     args["background"] = line_args[2] if len(line_args) > 2 else "white"
-    args["p5_global"] = line_args[3] if len(line_args) > 3 else "true"
-    args["p5_type"] = line_args[4] if len(line_args) > 4 else "q5"
-    args["p5play_use"] = line_args[5] if len(line_args) > 5 else "false"
-    args["py_type"] = line_args[6].lower() if len(line_args) > 6 else "mpy"
-    args["py_conf"] = line_args[7] if len(line_args) > 7 and line_args[7] != "{}" else None
-    args["js_src"] = line_args[8] if len(line_args) > 8 and line_args[8] != "[]" else None
-    args["py_ver"] = line_args[9] if len(line_args) > 9 else "none"
+    args["py_val"] = line_args[3] if len(line_args) > 3 and line_args[3] != "{}" else None
+    args["p5_global"] = line_args[4] if len(line_args) > 4 else "true"
+    args["p5_type"] = line_args[5] if len(line_args) > 5 else "q5"
+    args["p5play_use"] = line_args[6] if len(line_args) > 6 else "false"
+    args["py_type"] = line_args[7].lower() if len(line_args) > 7 else "mpy"
+    args["py_conf"] = line_args[8] if len(line_args) > 8 and line_args[8] != "{}" else None
+    args["js_src"] = line_args[9] if len(line_args) > 9 and line_args[9] != "[]" else None
+    args["py_ver"] = line_args[10] if len(line_args) > 10 else "none"
     args["py_script"] = cell
     return args
 

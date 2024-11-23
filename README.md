@@ -53,7 +53,7 @@ def draw():
 #### インスタンスモード
 
 ```python
-%%runp5 500 500 white False
+%%runp5 500 500 white '{}' False
 
 import pyscript
 import js
@@ -86,6 +86,18 @@ def sketch(p5):
 js.p5start(sketch)
 ```
 
+### グローバル変数
+
+PyScriptから以下の変数にアクセスできます。
+
+- 別のセルで設定したグローバル変数(_で始まる変数名やJSONに変換できないものは除く)
+- マジックコマンドの引数py_valで設定した変数
+- width: iframeの幅(マジックコマンドの引数で指定した幅)
+- height: iframeの高さ(マジックコマンドの引数で指定した高さ)
+
+この変数はjs.pysオブジェクトを介してアクセスできます。
+変数名が衝突した場合は上記リストの順に上書きされて適用されます。
+
 ### マジックコマンド
 
 #### %%runp5
@@ -93,18 +105,19 @@ js.p5start(sketch)
 セル内のp5play.jsライブラリを使ったPythonコードをPyScriptを用いてiframe内で実行するマジックコマンド
 
 ```juypyter
-%%runp5 [width] [height] [background] [p5_global] [p5_type] [p5play_use] [py_type] [py_conf] [js_src] [py_ver]
+%%runp5 [width] [height] [background] [py_val] [p5_global] [p5_type] [p5play_use] [py_type] [py_conf] [js_src] [py_ver]
 ```
 
 - width: iframeの幅を指定します。デフォルトは500です。
 - height: iframeの高さを指定します。デフォルトは500です。
 - background: iframeの背景色を指定します。デフォルトはwhiteです。
+- py_val: PyScriptの変数を''で囲んだJSON形式で指定します。デフォルトは'{}'です。
 - p5_global: p5playをグローバルモードと同様のコーディングができるようにするかどうかを指定します。デフォルトはTrueです。
 - p5_type: 実行するp5.jsの種類。q5またはp5を指定します。q5は軽量p5互換ライブラリのq5.js、p5はp5.jsを使います。デフォルトはq5です。
 - p5play_use: p5play.jsを使うかどうかを指定します。デフォルトはFalseです。
 - py_type: 実行するPythonの種類。pyまたはmpyを指定します。mpyはMicroPyton、pyはCPython互換のPyodideで実行します。デフォルトはmpyです。グローバルモードのときはmpy固定です。
-- py_conf: PyScriptの設定を''で囲んだJSON形式で指定します。デフォルトは{}です。
-- js_src: 外部JavaScriptのURLを''で囲んだ文字列のJSON配列形式で指定します。デフォルトは[]です。
+- py_conf: PyScriptの設定を''で囲んだJSON形式で指定します。デフォルトは'{}'です。
+- js_src: 外部JavaScriptのURLを''で囲んだ文字列のJSON配列形式で指定します。デフォルトは'[]'です。
 - py_ver: PyScriptのバージョンを指定します。
 
 #### %%genp5
